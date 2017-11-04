@@ -62,13 +62,32 @@ export WORKSPACE=xxxxxxx
 docker-compose up
 ```
 
+## Change supprt image format (image extension)
+
+[en]
+
+When you want to limit the extension of a file performing image transformation, set `settings.txt` as follows.
+
+Because processing is very slow, the reversible compression recommends that I support only irreversible compression.
+
+    SUPPORT_EXTENSIONS=.jpg,.jpeg,.gif
+
+[jp]
+
+画像変換するファイルの拡張子を限定したい場合、以下のように`settings.txt`を設定して下さい。
+
+可逆圧縮は処理が非常に遅いので、非可逆圧縮のみをサポートする事をお勧めします。
+
+    SUPPORT_EXTENSIONS=.jpg,.jpeg,.gif
+
+
 ## Change default image quality
 
 [en]
 
 `settings.txt` is the image configuration file.
 
-When you change a picture of the default, set it as follows.
+When you change a picture of the default, set `settings.txt` as follows.
 
     DEFAULT_IMAGE_QUALITY=80
 
@@ -76,7 +95,7 @@ When you change a picture of the default, set it as follows.
 
 `settings.txt` は画像設定ファイルです。
 
-デフォルトの画質を変更する場合は以下のように設定して下さい。
+デフォルトの画質を変更する場合、、以下のように`settings.txt`を設定して下さい。
 
     DEFAULT_IMAGE_QUALITY=80
 

@@ -17,7 +17,7 @@ log = getLogger(__name__)
 
 # 変換対象にする拡張子
 #（pngやgif等の可逆圧縮は処理が遅い割に圧縮率が非常に低いので、jpg等の非可逆圧縮のみを対象にする事をおすすめします）
-SUPPORT_EXTENSIONS = [".jpg", ".jpeg"]
+SUPPORT_EXTENSIONS = os.getenv("SUPPORT_EXTENSIONS", ".jpg,.jpeg").split(",")
 # dockerへのCPU割当数 = 並列処理の同時実行数
 DOCKER_CPU_COUNT = multiprocessing.cpu_count()
 # docker内での画像変換対象パス（docker-composeで指定）
