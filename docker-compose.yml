@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  image-converter:
+    build: .
+    container_name: simple-fast-image-converter
+    image: treetips/simple-fast-image-converter
+    env_file: settings.txt
+    volumes:
+      - ${WORKSPACE}:/images:rw
+      - ./scripts:/tmp/scripts:ro
+    environment:
+      - LANG=ja_JP.UTF-8
+      - TZ=Asia/Tokyo
+    command: "python /tmp/scripts/converter.py"
