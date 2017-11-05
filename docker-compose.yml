@@ -12,4 +12,9 @@ services:
     environment:
       - LANG=ja_JP.UTF-8
       - TZ=Asia/Tokyo
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
     command: "python /tmp/scripts/converter.py"
