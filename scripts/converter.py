@@ -18,6 +18,7 @@ log = getLogger(__name__)
 # 変換対象にする拡張子
 #（pngやgif等の可逆圧縮は処理が遅い割に圧縮率が非常に低いので、jpg等の非可逆圧縮のみを対象にする事をおすすめします）
 SUPPORT_EXTENSIONS = os.getenv("SUPPORT_EXTENSIONS", ".jpg,.jpeg").split(",")
+SUPPORT_FORMATS = os.getenv("SUPPORT_FORMATS", "JPEG").split(",")
 # dockerへのCPU割当数 = 並列処理の同時実行数
 DOCKER_CPU_COUNT = multiprocessing.cpu_count()
 # docker内での画像変換対象パス（docker-composeで指定）
@@ -80,20 +81,22 @@ def convert(file_paths: List[str]):
         _, ext = os.path.splitext(src_file_path)
         dest_file_path: str = src_file_path
         # 画像フォーマット等の設定
-        image: Image = Image.open(src_file_path, "r")
-        image_format: int = image.format
-        compress_quality: int = get_image_quality(image_format)
-        try:
-            # 拡張子偽装(.pngなのに中身がjpg等)の場合は、本当の拡張子で変換する
-            # （例）.pngだが中身はjpgの場合、jpgとして変換し、拡張子はそのまま.pngで保存する
-            image.save(dest_file_path, image_format, quality=compress_quality, optimize=True)
-        except:
-            import traceback
-            log.error('%s : %s : %s', image_format, dest_file_path, traceback.format_exc())
+        with Image.open(src_file_path, "r") as image:
+            image_format: int = image.format
+            if not image_format in SUPPORT_FORMATS:
+                continue
+            compress_quality: int = get_image_quality(image_format)
+            try:
+                # 拡張子偽装(.pngなのに中身がjpg等)の場合は、本当の拡張子で変換する
+                # （例）.pngだが中身はjpgの場合、jpgとして変換し、拡張子はそのまま.pngで保存する
+                image.save(dest_file_path, image_format, quality=compress_quality, optimize=True)
+            except:
+                import traceback
+                log.error('%s : %s : %s', image_format, dest_file_path, traceback.format_exc())
 
-        elapsed_time: float = time.time() - start
-        log.info(str("ext={0}, format={1}, quality={2}, time={3:.2f}s, path={4}".format(
-            ext, image_format, compress_quality, elapsed_time, dest_file_path)))
+            elapsed_time: float = time.time() - start
+            log.info(str("ext={0}, format={1}, quality={2}, time={3:.2f}s, path={4}".format(
+                ext, image_format, compress_quality, elapsed_time, dest_file_path)))
 
 def convert_parallel(src_file_path_units: List[List[str]]):
     """
