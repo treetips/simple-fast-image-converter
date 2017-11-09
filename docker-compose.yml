@@ -2,8 +2,6 @@ version: '3'
 
 services:
   image-converter:
-    build: .
-    container_name: simple-fast-image-converter
     image: treetips/simple-fast-image-converter
     env_file: settings.txt
     volumes:
